@@ -5,7 +5,8 @@ namespace BlockChain
 {
     public partial class Form1 : Form
     {
-        Chain chain;
+        private Chain chain;
+
         public Form1()
         {
             InitializeComponent();
@@ -17,19 +18,13 @@ namespace BlockChain
         {
             blocksListBox.Items.Clear();
 
-            chain.Add(dataTextBox.Text, "Admin");
-            foreach (var block in chain.Blocks)
-            {
-                blocksListBox.Items.Add(block);
-            }
+            chain.Add(dataTextBox.Text, userTextBox.Text);
+            blocksListBox.Items.AddRange(chain.Blocks.ToArray());
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            foreach (var block in chain.Blocks)
-            {
-                blocksListBox.Items.Add(block);
-            }
+            blocksListBox.Items.AddRange(chain.Blocks.ToArray());
         }
     }
 }
