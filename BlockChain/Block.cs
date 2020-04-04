@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+using System.IO;
 
 namespace BlockChain
 {
     /// <summary>
     /// Блок данных.
     /// </summary>
+    [DataContract]
     public class Block
     {
         /// <summary>
@@ -14,24 +18,29 @@ namespace BlockChain
         /// </summary>
         public int Id { get; private set; }
         /// <summary>
-        /// Данные.
+        /// Данные блока.
         /// </summary>
+        [DataMember]
         public string Data { get; private set; }
         /// <summary>
-        /// Дата создания.
+        /// Дата создания блока.
         /// </summary>
+        [DataMember]
         public DateTime Created { get; private set; }
         /// <summary>
         /// Хэш блока.
         /// </summary>
+        [DataMember]
         public string Hash { get; private set; }
         /// <summary>
         /// Хэш предыдущего блока.
         /// </summary>
+        [DataMember]
         public string PreviousHash { get; private set; }
         /// <summary>
         /// Имя пользователя.
         /// </summary>
+        [DataMember]
         public string User { get; private set; }
 
 
@@ -82,7 +91,7 @@ namespace BlockChain
         /// <summary>
         /// Получение данных блока.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Блок в виде строки.</returns>
         private string GetData()
         {
             var result = "";
@@ -98,8 +107,8 @@ namespace BlockChain
         /// <summary>
         /// Хэширование.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">Блок в виде строки.</param>
+        /// <returns>Хэш блока.</returns>
         private string GetHash(string data)
         {
             var message = Encoding.ASCII.GetBytes(data);
@@ -117,5 +126,39 @@ namespace BlockChain
 
 
         public override string ToString() => Data;
+
+        /// <summary>
+        /// Сериализация объекта Block из JSON строки.
+        /// </summary>
+        /// <returns>JSON строка.</returns>
+        public string Serialize()
+        {
+            DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Block));
+
+            using (var ms = new MemoryStream())
+            {
+                jsonSerializer.WriteObject(ms, this);
+                var result = Encoding.UTF8.GetString(ms.ToArray());
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Десериализация JSON строки в объект Block.
+        /// </summary>
+        /// <param name="json">JSON строка.</param>
+        /// <returns>Объект Block.</returns>
+        public static Block Deserialize(string json)
+        {
+            DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Block));
+
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+            {
+                var result = jsonSerializer.ReadObject(ms) as Block;
+
+                return result;
+            }            
+        }
     }
 }

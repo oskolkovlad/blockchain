@@ -50,7 +50,7 @@ namespace BlockChain
         /// <summary>
         /// Добавление нового блока.
         /// </summary>
-        /// <param name="data">Данные.</param>
+        /// <param name="data">Данные блока.</param>
         /// <param name="user">Имя пользователя.</param>
         public void Add(string data, string user)
         {
@@ -112,6 +112,11 @@ namespace BlockChain
             }
 
             return result;
+        }
+
+        private void Sync()
+        {
+            // TODO
         }
     }
 }
